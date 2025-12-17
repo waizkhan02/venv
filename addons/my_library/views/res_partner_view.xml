@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_partner_form_inherit_books_count" model="ir.ui.view">
+        <field name="name">res.partner.form.library.authored.count</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_partner_form"/>
+
+        <field name="arch" type="xml">
+
+            <!-- Add the count below the name field -->
+            <xpath expr="//field[@name='vat']" position="after">
+                <field name="count_books" readonly="1"/>
+            </xpath>
+
+        </field>
+    </record>
+
+</odoo>
