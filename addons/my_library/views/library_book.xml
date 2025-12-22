@@ -18,23 +18,35 @@
         <field name="model">library.book</field>
         <field name="arch" type="xml">
             <form>
-                <button name="make_available" string="Make Available" type="object"/>
-                <button name="make_lost" string="Make Lost" type="object" />
-                <button name="log_all_library_members" string="log members" type="object"/>
-                <button name="change_release_date" string="update date" type="object"/>
-                <field name="state" widget="statusbar"/>
                 <header>
-                <button name="do_archive" string="Toggle Archive" type="object" class="oe_highlight"/>
-                <field name="active"/>
+                    <button name="make_available" string="Make Available" type="object" class="oe_highlight" states="lost,borrowed"/>
+                    <button name="make_borrowed" string="Make Borrowed" type="object" states="available"/>
+                    <button name="make_lost" string="Make Lost" type="object" states="available,borrowed"/>
+                     <button name="create_categories" string="Create Categories" type="object"/>
+                    <button name="log_all_library_members" string="Log Members" type="object"/>
+                    <button name="change_release_date" string="Update Date" type="object"/>
+                    <button name="find_book" string="Find Book" type="object"/>
+                    <button name="filter_books" string="Filter Book" type="object"/>
+                    <button name="mapped_books" string="Mapped Authors" type="object"/>
+                    <button name="sort_books" string="Sort Books" type="object"/>
+                    <field name="state" widget="statusbar"/>
                 </header>
                 <sheet>
+                    <widget name="web_ribbon" title="Archived" bg_color="bg-danger" attrs="{'invisible': [('active', '=', True)]}"/>
+
+                    <field name="cover" widget="image" class="oe_avatar"/>
+
+                    <div class="oe_title">
+                        <label for="name" class="oe_edit_only"/>
+                        <h1>
+                            <field name="name" placeholder="Book Title"/>
+                        </h1>
+                    </div>
                     <group>
                         <group>
                             <field name="name"/>
                             <field name="author_ids" widget="many2many_tags"/>
-
                             <field name="distributor_ids" widget="many2many_tags"/>
-
                             <field name="publisher_id"/>
                             <field name="state"/>
                             <field name="currency_id"/>
@@ -46,6 +58,8 @@
                         </group>
                         <group>
                             <field name="short_name"/>
+                            <field name="old_edition" />
+                            <field name="category_id"/>
                             <field name="cost_price"/>
                             <field name="date_release"/>
                             <field name="date_updated"/>

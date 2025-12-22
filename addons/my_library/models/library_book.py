@@ -2,6 +2,9 @@ from odoo import models, fields, api , _
 from odoo.exceptions import ValidationError
 from odoo.exceptions import UserError
 from datetime import timedelta
+import logging  # <--- Import the python logging module
+
+_logger = logging.getLogger(__name__) # <--- Initialize the logger
 
 class BaseArchive(models.AbstractModel):
     _name = 'base.archive'
@@ -26,14 +29,18 @@ class LibraryBook(models.Model):
     short_name = fields.Char('Short Title')
     date_release = fields.Date('Release Date')
     date_updated = fields.Datetime('Last Updated')
+    category_id = fields.Many2one('library.book.category', string='Category')
     pages = fields.Integer('Number of Pages')
     notes = fields.Text('Internal Notes')
     description = fields.Html('Description')
     cover = fields.Binary('Book Cover')
+    isbn = fields.Char('ISBN')
+    old_edition = fields.Many2one('library.book', string='Old Edition')
     # active = fields.Boolean('Active', default=True)
     out_of_print = fields.Boolean('Out of Print?')
     state = fields.Selection([
         ('draft', 'Not Available'),
+        ('borrowed', 'Borrowed'),
         ('available', 'Available'),
         ('lost', 'Lost')
     ], string='State')
@@ -94,11 +101,13 @@ class LibraryBook(models.Model):
             else:
                 book.age_days = 10
 
-
     @api.model
     def is_allowed_transition(self, old_state, new_state):
         allowed = [('draft', 'available'),
+                   ('available', 'borrowed'),
+                   ('borrowed', 'available'),
                    ('available', 'lost'),
+                   ('borrowed', 'lost'),
                    ('lost', 'available')]
         return (old_state, new_state) in allowed
 
@@ -139,6 +148,9 @@ class LibraryBook(models.Model):
 
     def make_available(self):
         self.change_state('available')
+
+    def make_borrowed(self):
+        self.change_state('borrowed')
 
     def make_lost(self):
         self.change_state('lost')
@@ -182,10 +194,24 @@ class LibraryBook(models.Model):
 
     def name_get(self):
         result = []
-        for record in self:
-            rec_name = "%s (%s)" % (record.name, record.date_release or '')
-            result.append((record.id, rec_name))
+        for book in self:
+            authors = book.author_ids.mapped('name')
+            name = '%s (%s)' % (book.name, ', '.join(authors))
+            result.append((book.id, name))
         return result
+
+    @api.model
+    def _name_search(self, name='', args=None, operator='ilike', limit=100, name_get_uid=None):
+        args = [] if args is None else args.copy()
+        if not (name == '' and operator == 'ilike'):
+            args += ['|', '|', '|',
+                     ('name', operator, name),
+                     ('isbn', operator, name),
+                     ('author_ids.name', operator, name)
+                     ]
+        return super(LibraryBook, self)._name_search(
+            name=name, args=args, operator=operator,
+            limit=limit, name_get_uid=name_get_uid)
 
     def post_to_webservices(self,data):
         try:
@@ -194,7 +220,62 @@ class LibraryBook(models.Model):
         except IOError:
             error_msg = _("Error, could not post to webservices")
             raise UserError(error_msg)
-        return content
+        return
+
+    def create_categories(self):
+        categ1 = {
+            'name': 'Child category 1',
+            'description': 'Description for child 1'
+        }
+        categ2 = {
+            'name': 'Child category 2',
+            'description': 'Description for child 2'
+        }
+        parent_category_val = {
+            'name': 'Parent category',
+            'description': 'Description for parent category',
+            'child_ids': [
+                (0, 0, categ1),
+                (0, 0, categ2),
+            ]
+        }
+        # Total 3 records (1 parent and 2 child) will be craeted in library.book.category model
+        record = self.env['library.book.category'].create(parent_category_val)
+        return True
+
+    # Filter recordset
+    def filter_books(self):
+        all_books = self.search([])
+        filtered_books = self.books_with_multiple_authors(all_books)
+        _logger.info('Filtered Books: %s', filtered_books)
+
+    @api.model
+    def books_with_multiple_authors(self, all_books):
+        def predicate(book):
+            if len(book.author_ids) > 1:
+                return True
+        return all_books.filtered(predicate)
+
+    # Traversing recordset
+    def mapped_books(self):
+        all_books = self.search([])
+        books_authors = self.get_author_names(all_books)
+        _logger.info('Books Authors: %s', books_authors)
+
+    @api.model
+    def get_author_names(self, all_books):
+        return all_books.mapped('author_ids.name')
+
+    # Sorting recordset
+    def sort_books(self):
+        all_books = self.search([])
+        books_sorted = self.sort_books_by_date(all_books)
+        _logger.info('Books before sorting: %s', all_books)
+        _logger.info('Books after sorting: %s', books_sorted)
+
+    @api.model
+    def sort_books_by_date(self, all_books):
+        return all_books.sorted(key='date_release')
 
 
 #class for respartnwer
