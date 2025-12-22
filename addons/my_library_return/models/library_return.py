@@ -1,0 +1,24 @@
+from odoo import models,fields
+from datetime import timedelta
+class library_return(models.Model):
+    _inherit = 'library.book'
+
+    date_return = fields.Date(string='Date to Return')
+
+    def make_borrowed(self):
+        day_to_borrow = self.category_id.max_borrow_days or 10
+        self.date_return = fields.date.today() + timedelta(days=day_to_borrow)
+        return super(library_return, self).make_borrowed()
+
+
+    def make_available(self):
+        self.date_return = False
+        return super(library_return, self).make_available()
+
+
+class library_book_category(models.Model):
+    _inherit = 'library.book.category'
+    max_borrow_days = fields.Integer(
+        string='Max. Borrow Days',
+        help='Maximum number of days borrowed',
+        default=10)
