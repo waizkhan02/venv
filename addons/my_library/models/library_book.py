@@ -277,6 +277,16 @@ class LibraryBook(models.Model):
     def sort_books_by_date(self, all_books):
         return all_books.sorted(key='date_release')
 
+    def book_rent (self):
+        self.ensure_one()
+        if self.state != 'available':
+            raise UserError(_('You cannot rent books'))
+        rent_as_superuser = self.env['library.book.rent'].sudo()
+        rent_as_superuser.create({
+            'book_id':self.id,
+            'borrower_id': self.env.user.partner_id.id,
+        })
+
 
 #class for respartnwer
 

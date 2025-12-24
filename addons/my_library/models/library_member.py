@@ -8,6 +8,7 @@ class LibraryMember(models.Model):
     member_id = fields.Many2one('res.partner', string='Member')
     member_email = fields.Char(string='Email')
 
+
     _inherits = {'res.partner': 'partner_id'}
 
 

@@ -20,6 +20,7 @@
             <form>
                 <header>
                     <button name="make_available" string="Make Available" type="object" class="oe_highlight" states="lost,borrowed"/>
+                    <button name = "book_rent" string = "Rent this book" type="object" class="btn-primary"/>
                     <button name="make_borrowed" string="Make Borrowed" type="object" states="available"/>
                     <button name="make_lost" string="Make Lost" type="object" states="available,borrowed"/>
                      <button name="create_categories" string="Create Categories" type="object"/>
@@ -101,6 +102,8 @@
                 <field name="distributor_ids"/>
                 <filter string="No Authors" name="without_author"
                         domain="[('author_ids','=',False)]"/>
+                <separator/>
+                <filter string="Archived" name="inactive" domain="[('active','=',False)]"/>
             </search>
         </field>
     </record>
