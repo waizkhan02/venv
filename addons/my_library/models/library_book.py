@@ -153,7 +153,10 @@ class LibraryBook(models.Model):
         self.change_state('borrowed')
 
     def make_lost(self):
-        self.change_state('lost')
+        self.ensure_one()
+        self.state = 'lost'
+        if not self.env.context.get('avoid_deactivate'):
+            self.active = False
 
     def make_draft(self):
         self.change_state('draft')
@@ -286,6 +289,35 @@ class LibraryBook(models.Model):
             'book_id':self.id,
             'borrower_id': self.env.user.partner_id.id,
         })
+
+    def average_book_occupation(self):
+        self.flush()
+        # First check what data we have
+        check_query = """
+            SELECT 
+                lbr.id, lb.name, lbr.rent_date, lbr.return_date, lbr.state
+            FROM 
+                library_book_rent AS lbr
+            JOIN 
+                library_book as lb ON lb.id = lbr.book_id
+            ORDER BY lbr.id;"""
+        self.env.cr.execute(check_query)
+        all_data = self.env.cr.fetchall()
+        _logger.info("All rent data: %s", all_data)
+        
+        sql_query = """
+            SELECT
+                lb.name,
+                avg((EXTRACT(epoch from age(return_date, rent_date)) / 86400))::int
+            FROM
+                library_book_rent AS lbr
+            JOIN
+                library_book as lb ON lb.id = lbr.book_id
+            WHERE lbr.state = 'returned' AND lbr.return_date IS NOT NULL
+            GROUP BY lb.name;"""
+        self.env.cr.execute(sql_query)
+        result = self.env.cr.fetchall()
+        _logger.info("Average book occupation: %s", result)
 
 
 #class for respartnwer

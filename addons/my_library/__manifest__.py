@@ -8,7 +8,7 @@ Description related to library.
 'author': "waiz khan",
 'website': "http://www.example.com",
 'category': 'Uncategorized',
-'version': '13.0.1',
+'version': '14.0.1.0.0',
 'depends': ['contacts'],
 'data': [
     'security/Groups.xml',
@@ -17,6 +17,9 @@ Description related to library.
     'views/library_book_category_views.xml',
     'views/res_partner_view.xml',
     'views/library_member.xml',
+    'views/library_book_rent.xml',
+    'wizard/library_book_rent_wizard.xml',
+    'wizard/return_wizard.xml',
     # 'security/library_rules.xml',
     ],
  # 'sequence' : -80,
