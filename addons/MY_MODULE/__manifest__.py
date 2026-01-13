@@ -4,10 +4,11 @@
     'description': """Long description""",  # You can also rst format
     'author': "Parth Gajjar",
     'website': "http://www.example.com",
-    'category': 'Uncategorized',
+    'category': 'Project',
     'version': '14.0.1',
-    'depends': ['base', 'account'],
+    'depends': ['base', 'account', 'project'],
     'data': [
         'views/my_contacts.xml',
+        'views/my_task.xml',
     ],
 }

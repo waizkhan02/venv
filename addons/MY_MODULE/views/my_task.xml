@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!--    kanban_groups-->
+
+    <record id="kanban_tasks" model="ir.ui.view">
+        <field name="name">project.task.kanban</field>
+        <field name="model">project.task</field>
+        <field name="arch" type="xml">
+            <kanban default_group_by="stage_id" class="o_kanban_small_column">
+
+                <field name="stage_id"/>
+                <field name="name"/>
+                <field name="user_id"/>
+                <field name="priority"/>
+                <field name="color"/>
+                <field name="project_id"/>
+
+                <templates>
+                    <t t-name="kanban-box">
+                        <div t-attf-class="#{kanban_color(record.color.raw_value)} oe_kanban_global_click oe_kanban_card">
+
+                            <div class="o_dropdown_kanban dropdown">
+                                <a class="dropdown-toggle o-no-caret btn" role="button" data-toggle="dropdown" href="#"
+                                   aria-label="Dropdown menu" title="Dropdown menu">
+                                    <span class="fa fa-ellipsis-v"/>
+                                </a>
+                                <div class="dropdown-menu" role="menu">
+                                    <t t-if="widget.editable">
+                                        <a role="menuitem" type="edit" class="dropdown-item">Edit</a>
+                                    </t>
+                                    <t t-if="widget.deletable">
+                                        <a role="menuitem" type="delete" class="dropdown-item">Delete</a>
+                                    </t>
+                                    <ul class="oe_kanban_colorpicker" data-field="color"/>
+                                </div>
+                            </div>
+
+                            <div class="oe_kanban_content">
+                                <div class="o_kanban_record_title">
+                                    <strong>
+                                        <field name="name"/>
+                                    </strong>
+                                </div>
+
+                                <div class="text-muted">
+                                    <field name="project_id"/>
+                                </div>
+
+                                <div class="o_kanban_record_bottom">
+                                    <div class="oe_kanban_bottom_left">
+                                        <field name="priority" widget="priority"/>
+                                    </div>
+                                    <div class="oe_kanban_bottom_right">
+                                        <field name="user_id" widget="many2one_avatar_user"/>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="oe_clear"/>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <!--    calender_view-->
+    <record id="view_project_task_calendar" model="ir.ui.view">
+        <field name="model">project.task</field>
+        <field name="arch" type="xml">
+            <calendar date_start="date_assign" date_stop="date_end" color="project_id">
+                <field name="name"/>
+                <field name="user_id"/>
+            </calendar>
+        </field>
+    </record>
+
+    <!--    pivot-->
+
+    <record id="view_project_tasks_pivot" model="ir.ui.view">
+        <field name="model">project.task</field>
+        <field name="arch" type="xml">
+            <pivot>
+                <field name="user_id" type="row"/>
+                <field name="project_id" type="col"/>
+                <field name="stage_id" type="col"/>
+            </pivot>
+        </field>
+    </record>
+
+    <!--    graph-->
+
+    <record id="view_project_tasks_graph" model="ir.ui.view">
+        <field name="model">project.task</field>
+        <field name="arch" type="xml">
+            <graph type="bar">
+                <field name="user_id"/>
+                <field name="stage_id"/>
+            </graph>
+        </field>
+    </record>
+
+    <!--    cohort_view-->
+
+<!--    <record id="view_project_tasks_cohort" model="ir.ui.view">-->
+<!--        <field name="name">project.task cohort</field>-->
+<!--        <field name="model">project.task</field>-->
+<!--        <field name="arch" type="xml">-->
+<!--            <cohort date_start="create_date" date_stop="date_deadline" interval="month" string="Task Cohort"/>-->
+<!--        </field>-->
+<!--    </record>-->
+
+    <!--    activity_box-->
+
+    <record id="view_project_tasks_activity" model="ir.ui.view">
+        <field name="name">project task activity</field>
+        <field name="model">project.task</field>
+        <field name="arch" type="xml">
+            <activity string="Tasks">
+                <templates>
+                    <div t-name="activity-box">
+                        <div>
+                            <field name="name" display="full"/>
+                            <field name="project_id" muted="1" display="full"/>
+                        </div>
+                    </div>
+                </templates>
+            </activity>
+        </field>
+    </record>
+    <!--    action-->
+    <record id='action_my_tasks' model='ir.actions.act_window'>
+        <field name="name">My tasks</field>
+        <field name="res_model">project.task</field>
+        <field name="view_mode">kanban,tree,form</field>
+        <field name="context">{'kanban_view_ref': 'MY_MODULE.kanban_tasks'}</field>
+    </record>
+
+    <record id='action_my_tasks_1' model='ir.actions.act_window'>
+        <field name="name">My track</field>
+        <field name="res_model">project.task</field>
+        <field name="view_mode">calendar,tree,form</field>
+        <field name="context">{'calendar_view_ref': 'MY_MODULE.view_project_task_calendar'}</field>
+    </record>
+
+    <record id='action_my_tasks_2' model='ir.actions.act_window'>
+        <field name="name">My progress</field>
+        <field name="res_model">project.task</field>
+        <field name="view_mode">tree,graph,pivot,form</field>
+        <field name="context">{'graph_view_ref': 'MY_MODULE.view_project_tasks_graph', 'pivot_view_ref':
+            'MY_MODULE.view_project_tasks_pivot'}
+        </field>
+    </record>
+
+    <record id='action_my_tasks_3' model='ir.actions.act_window'>
+        <field name="name">My work</field>
+        <field name="res_model">project.task</field>
+        <field name="view_mode">cohort,tree,form</field>
+        <field name="context">{'cohort_view_ref': 'MY_MODULE.view_project_tasks_cohort'}</field>
+    </record>
+    <record id='action_my_tasks_4' model='ir.actions.act_window'>
+        <field name="name">My activity</field>
+        <field name="res_model">project.task</field>
+        <field name="view_mode">tree,activity,form</field>
+        <field name="context">{'activity_view_ref': 'my_project.view_project_tasks_activity'}</field>
+    </record>
+
+
+    <!--    menu-->
+    <menuitem id="menu_my_tasks" parent="menu_custom_top_level" action="action_my_tasks" sequence="12"/>
+    <menuitem id="menu_my_tasks_1" parent="menu_custom_top_level" action="action_my_tasks_1" sequence="13"/>
+    <menuitem id="menu_my_tasks_2" parent="menu_custom_top_level" action="action_my_tasks_2" sequence="14"/>
+    <menuitem id="menu_my_tasks_3" parent="menu_custom_top_level" action="action_my_tasks_3" sequence="15"/>
+    <menuitem id="menu_my_tasks_4" parent="menu_custom_top_level" action="action_my_tasks_4" sequence="16"/>
+
+</odoo>
