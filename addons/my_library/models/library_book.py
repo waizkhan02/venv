@@ -1,10 +1,13 @@
-from odoo import models, fields, api , _
+from odoo import models, fields, api, _
 from odoo.exceptions import ValidationError
 from odoo.exceptions import UserError
 from datetime import timedelta
 import logging  # <--- Import the python logging module
+from odoo.tests.common import Form
 
-_logger = logging.getLogger(__name__) # <--- Initialize the logger
+
+_logger = logging.getLogger(__name__)  # <--- Initialize the logger
+
 
 class BaseArchive(models.AbstractModel):
     _name = 'base.archive'
@@ -45,18 +48,15 @@ class LibraryBook(models.Model):
         ('lost', 'Lost')
     ], string='State')
 
-    cost_price = fields.Float('Book Price', digits=(2 , 2))
+    cost_price = fields.Float('Book Price', digits=(2, 2))
     retail_price = fields.Monetary('Retail Price')
     currency_id = fields.Many2one('res.currency', string='Currency')
     reader_rating = fields.Float('Reader Average Rating', digits=(4, 2))
-
-
 
     author_ids = fields.Many2many(
         'res.partner',
         string='Authors'
     )
-
 
     distributor_ids = fields.Many2many(
         'res.partner',
@@ -77,7 +77,6 @@ class LibraryBook(models.Model):
         related='publisher_id.city',
         readonly=True
     )
-
 
     count = fields.Integer(related="author_ids.count_books", string="Author Book Count")
 
@@ -118,10 +117,10 @@ class LibraryBook(models.Model):
     def find_book(self):
         domain = [
             '|',
-                '&',    ('name', 'ilike', 'Book Name'),
-                        ('pages', '=', 200),
-                '&',    ('name', 'ilike', 'Book Name 2'),
-                        ('pages', '>', 200)
+            '&', ('name', 'ilike', 'Book Name'),
+            ('pages', '=', 200),
+            '&', ('name', 'ilike', 'Book Name 2'),
+            ('pages', '>', 200)
         ]
         book = self.env['library.book'].search(domain)
         print(book)
@@ -135,8 +134,6 @@ class LibraryBook(models.Model):
 
         return all_books.filter(predicate)
 
-
-
     def change_state(self, new_state):
         for book in self:
             if book.is_allowed_transition(book.state, new_state):
@@ -144,7 +141,6 @@ class LibraryBook(models.Model):
             else:
                 msg = _('Moving from %s to %s is not allowed') % (book.state, new_state)
                 raise UserError(msg)
-
 
     def make_available(self):
         self.change_state('available')
@@ -216,9 +212,9 @@ class LibraryBook(models.Model):
             name=name, args=args, operator=operator,
             limit=limit, name_get_uid=name_get_uid)
 
-    def post_to_webservices(self,data):
+    def post_to_webservices(self, data):
         try:
-            req =requests.post('http://my-test-servive.com', data=data, timeout=2)
+            req = requests.post('http://my-test-servive.com', data=data, timeout=2)
             content = req.json()
         except IOError:
             error_msg = _("Error, could not post to webservices")
@@ -257,6 +253,7 @@ class LibraryBook(models.Model):
         def predicate(book):
             if len(book.author_ids) > 1:
                 return True
+
         return all_books.filtered(predicate)
 
     # Traversing recordset
@@ -280,13 +277,13 @@ class LibraryBook(models.Model):
     def sort_books_by_date(self, all_books):
         return all_books.sorted(key='date_release')
 
-    def book_rent (self):
+    def book_rent(self):
         self.ensure_one()
         if self.state != 'available':
             raise UserError(_('You cannot rent books'))
         rent_as_superuser = self.env['library.book.rent'].sudo()
         rent_as_superuser.create({
-            'book_id':self.id,
+            'book_id': self.id,
             'borrower_id': self.env.user.partner_id.id,
         })
 
@@ -304,7 +301,7 @@ class LibraryBook(models.Model):
         self.env.cr.execute(check_query)
         all_data = self.env.cr.fetchall()
         _logger.info("All rent data: %s", all_data)
-        
+
         sql_query = """
             SELECT
                 lb.name,
@@ -319,8 +316,16 @@ class LibraryBook(models.Model):
         result = self.env.cr.fetchall()
         _logger.info("Average book occupation: %s", result)
 
+    def return_all_books(self):
+        self.ensure_one()
+        wizard = self.env['library.return.wizard']
+        with Form(wizard) as return_form:
+            return_form.borrower_id = self.env.user.partner_id
+            record = return_form.save()
+            record.books_returns()
 
-#class for respartnwer
+
+# class for respartnwer
 
 class ResPartner(models.Model):
     _inherit = 'res.partner'
@@ -337,7 +342,6 @@ class ResPartner(models.Model):
         string='Distributed Books'
     )
 
-
     published_book_ids = fields.One2many(
         'library.book',
         'publisher_id',
@@ -350,8 +354,3 @@ class ResPartner(models.Model):
     def _compute_count_books(self):
         for r in self:
             r.count_books = len(r.authored_book_ids)
-
-
-
-
-

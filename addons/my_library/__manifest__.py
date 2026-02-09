@@ -9,7 +9,7 @@ Description related to library.
  'website': "http://www.example.com",
  'category': 'library',
  'version': '14.0.1.0.0',
- 'depends': ['contacts'],
+ 'depends': ['contacts', 'website', ],
  'data': [
      'security/Groups.xml',
      'security/library_security.xml',
@@ -24,7 +24,12 @@ Description related to library.
      'wizard/return_wizard.xml',
      'views/library.book.rent.statistics.xml',
      'views/res_setting_config.xml',
+     'views/template.xml',
+     'data/data.xml',
+
      # 'security/library_rules.xml',
  ],
+ 'demo': [
+     'demo/demo.xml'],
  # 'sequence' : -80,
  }

@@ -19,9 +19,12 @@
         <field name="arch" type="xml">
             <form>
                 <header>
-                    <button name="make_available" string="Make Available" type="object" class="oe_highlight" states="lost,borrowed"/>
-                    <button name = "book_rent" string = "Rent this book" type="object" class="btn-primary" groups="my_library.group_self_borrow"/>
-                    <button name = "average_book_occupation" string="log average occ." type="object"/>
+                    <button name="make_available" string="Make Available" type="object" class="oe_highlight"
+                            states="lost,borrowed"/>
+                    <button name="book_rent" string="Rent this book" type="object" class="btn-primary"
+                            groups="my_library.group_self_borrow"/>
+                    <button name="average_book_occupation" string="log average occ." type="object"/>
+                    <button name="return_all_books" string="Return all book" type="object" class="btn-primary"/>
                     <button name="make_borrowed" string="Make Borrowed" type="object" states="available"/>
                     <button name="make_lost" string="Make Lost" type="object" states="available,borrowed"/>
                     <button name="create_categories" string="Create Categories" type="object"/>
@@ -34,7 +37,8 @@
                     <field name="state" widget="statusbar"/>
                 </header>
                 <sheet>
-                    <widget name="web_ribbon" title="Archived" bg_color="bg-danger" attrs="{'invisible': [('active', '=', True)]}"/>
+                    <widget name="web_ribbon" title="Archived" bg_color="bg-danger"
+                            attrs="{'invisible': [('active', '=', True)]}"/>
 
                     <field name="cover" widget="image" class="oe_avatar"/>
 
@@ -60,7 +64,7 @@
                         </group>
                         <group>
                             <field name="short_name"/>
-                            <field name="old_edition" />
+                            <field name="old_edition"/>
                             <field name="category_id"/>
                             <field name="cost_price"/>
                             <field name="date_release"/>

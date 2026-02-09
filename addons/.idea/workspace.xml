@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ChangeListManager">
+    <list default="true" id="c250924a-2ba2-47d5-82ff-b3769d629a09" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/MY_MODULE/__manifest__.py" beforeDir="false" afterPath="$PROJECT_DIR$/MY_MODULE/__manifest__.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/MY_MODULE/views/my_contacts.xml" beforeDir="false" afterPath="$PROJECT_DIR$/MY_MODULE/views/my_contacts.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/my_library/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/my_library/__init__.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/my_library/__manifest__.py" beforeDir="false" afterPath="$PROJECT_DIR$/my_library/__manifest__.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/my_library/controller/__init__.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/my_library/models/library_book.py" beforeDir="false" afterPath="$PROJECT_DIR$/my_library/models/library_book.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/my_library/views/library_book.xml" beforeDir="false" afterPath="$PROJECT_DIR$/my_library/views/library_book.xml" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="CopilotPersistence">
+    <persistenceIdMap>
+      <entry key="_/home/waizkhan/custom/odoo_14/env/venv/addons" value="39QjRjjdBO4kJWyPIAhJZC6J3Vh" />
+    </persistenceIdMap>
+  </component>
+  <component name="ProjectColorInfo"><![CDATA[{
+  "associatedIndex": 5
+}]]></component>
+  <component name="ProjectId" id="39QjRjjdBO4kJWyPIAhJZC6J3Vh" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "ModuleVcsDetector.initialDetectionPerformed": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true"
+  }
+}]]></component>
+  <component name="SharedIndexes">
+    <attachedChunks>
+      <set>
+        <option value="bundled-python-sdk-3944b0c99280-6d6dccd035ac-com.jetbrains.pycharm.pro.sharedIndexes.bundled-PY-253.30387.127" />
+      </set>
+    </attachedChunks>
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="c250924a-2ba2-47d5-82ff-b3769d629a09" name="Changes" comment="" />
+      <created>1770635186642</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1770635186642</updated>
+    </task>
+    <servers />
+  </component>
+  <component name="github-copilot-workspace">
+    <instructionFileLocations>
+      <option value=".github/instructions" />
+    </instructionFileLocations>
+    <promptFileLocations>
+      <option value=".github/prompts" />
+    </promptFileLocations>
+  </component>
+</project>
